@@ -67,3 +67,72 @@ h1 {
   flex-wrap: wrap;
   justify-content: center;
 }
+
+/* Auth components */
+.auth-container {
+  margin-top: 2rem;
+}
+
+.login-prompt {
+  display: flex;
+  justify-content: center;
+}
+
+.auth-status {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.status-text {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.875rem;
+}
+
+/* App layout (authenticated) */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+}
+
+.app-title {
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.app-main {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+/* Callback states */
+.callback-processing,
+.callback-success,
+.callback-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+  gap: 1rem;
+}
+
+.callback-error h2 {
+  color: #d32f2f;
+}
+
+.callback-success h2 {
+  color: #388e3c;
+}
