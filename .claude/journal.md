@@ -159,8 +159,36 @@ Building simple diet logging app with Google integration
 - No offline detection yet (Phase 7)
 - No user info display yet (email/name from userinfo.email scope)
 
-### Next: Phase 3 - Google Sheets Integration
-Need to test OAuth first, then:
-1. Sheet detection/creation
-2. CRUD operations
-3. Header row initialization
+### Deployment Status
+- ✅ PR #4 merged to main (2025-10-30 evening)
+- ✅ GH Actions deployed successfully
+- ✅ Live at https://galsapir.github.io/diet-log-mini/
+- ✅ Tested on mobile - shows login UI correctly
+- ❌ OAuth not configured yet (expected error: "OAuth client ID not configured")
+
+### Session End Summary (2025-10-30)
+**Completed:**
+- Phase 1 & 2 fully deployed
+- 46 tests passing
+- OAuth flow ready (needs config)
+
+**Current State:**
+- On `main` branch
+- All code committed and pushed
+- Ready for OAuth config OR Phase 3
+
+**Immediate Next Steps (choose one path):**
+
+**Path A: Test OAuth (recommended first)**
+1. Get Google OAuth Client ID from GCP Console
+2. Enable APIs: Sheets + Drive
+3. Add client ID to GitHub repo secrets
+4. Test full login flow on mobile
+5. Verify token refresh works
+
+**Path B: Continue Phase 3 (Sheets Integration)**
+1. Write tests for Sheets API wrapper (TDD)
+2. Implement sheet detection/creation
+3. Test with OAuth later
+
+**Recommendation:** Test OAuth first (Path A) - validates Phase 2 before building on it.
