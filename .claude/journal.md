@@ -46,3 +46,32 @@ Building simple diet logging app with Google integration
 - [x] Planning phase discussion with Gal
 - [x] Created PLAN.md with full implementation roadmap
 - [x] Saved to repo (gh CLI blocked by hooks)
+
+## 2025-10-30 - Phase 1: Project Foundation ✅
+
+### What We Built
+- Vite project with vanilla JS
+- Material Web Components integrated
+- Vitest testing setup (happy-dom)
+- Folder structure: src/auth/, src/api/, src/components/, src/utils/, tests/
+- GitHub Actions workflow for GH Pages deployment
+- Basic Material Design UI with hero section
+- README with complete setup instructions
+- .env.example for OAuth configuration
+
+### Technical Decisions
+- Updated deps to fix vulnerabilities (Vite 6.4, Vitest 3.0, happy-dom 20.0)
+- Using happy-dom instead of jsdom (lighter, faster)
+- GH Pages base path: /diet-log-mini/
+- Material theme color: #6750A4
+
+### Tests
+- ✅ Build works
+- ✅ Dev server runs
+- ✅ Vitest runs
+- ✅ No npm vulnerabilities
+
+### Next: Phase 2 - Authentication
+- OAuth PKCE flow
+- Token management
+- Login UI
