@@ -71,7 +71,96 @@ Building simple diet logging app with Google integration
 - ✅ Vitest runs
 - ✅ No npm vulnerabilities
 
-### Next: Phase 2 - Authentication
-- OAuth PKCE flow
-- Token management
-- Login UI
+### Deployment
+- ✅ Fixed package-lock.json issue
+- ✅ GH Actions workflow successful
+- ✅ Live at: https://galsapir.github.io/diet-log-mini/
+
+---
+
+## Phase 2: OAuth Authentication ✅
+
+### What We Built
+1. **PKCE Utilities** (TDD - 12 tests):
+   - Code verifier generation (crypto random)
+   - SHA-256 code challenge
+   - Base64 URL encoding
+
+2. **OAuth Flow** (TDD - 16 tests):
+   - Auth URL builder with all params
+   - Callback handler with error cases
+   - Token exchange with Google
+
+3. **Token Management** (TDD - 17 tests):
+   - localStorage persistence
+   - Expiry checks (5min buffer)
+   - Refresh token flow
+   - Logout
+
+4. **Login UI**:
+   - Auth component (login/logout)
+   - Callback handler page
+   - Material Design buttons
+   - Error states with user feedback
+   - Main app routing (authenticated vs login)
+
+### Tests
+- ✅ 46 tests passing (all TDD)
+- ✅ Build successful
+- ✅ No test failures
+
+### Implementation Notes
+- PKCE flow = secure (no client secret)
+- State parameter for CSRF protection
+- sessionStorage for verifier (single use)
+- localStorage for tokens (persistent)
+- Auto-refresh before expiry
+
+### Google Scopes
+- `https://www.googleapis.com/auth/spreadsheets`
+- `https://www.googleapis.com/auth/drive.file`
+- `https://www.googleapis.com/auth/userinfo.email`
+
+### Architectural Decisions (for future ref)
+**Why PKCE?**
+- No client secret needed (safe for public clients like SPAs)
+- SHA-256 challenge prevents code interception attacks
+- Standard for OAuth in browser-based apps
+
+**Why localStorage for tokens?**
+- Need persistence across page reloads
+- User stays logged in between sessions
+- Trade-off: XSS vulnerability (acceptable for personal use)
+
+**Why sessionStorage for verifier?**
+- Single-use only (cleared after token exchange)
+- Not needed after callback completes
+- Prevents replay attacks
+
+**Callback routing**
+- Separate `callback.html` page (not SPA route)
+- Simpler than client-side routing for OAuth
+- Handles error states explicitly
+
+### Current Blockers
+- OAuth flow implemented but UNTESTED
+- Needs Google OAuth Client ID from GCP Console
+- Need to verify token refresh works (requires real tokens)
+
+### Things to Test (when OAuth configured)
+1. Full login flow end-to-end
+2. Token refresh before expiry
+3. Error handling (user denies access, network failure)
+4. State validation (CSRF protection)
+5. Mobile browser compatibility
+
+### Technical Debt / Notes
+- Token refresh logic exists but untested (needs real OAuth session)
+- No offline detection yet (Phase 7)
+- No user info display yet (email/name from userinfo.email scope)
+
+### Next: Phase 3 - Google Sheets Integration
+Need to test OAuth first, then:
+1. Sheet detection/creation
+2. CRUD operations
+3. Header row initialization
