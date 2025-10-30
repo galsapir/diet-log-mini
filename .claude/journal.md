@@ -78,34 +78,51 @@ Building simple diet logging app with Google integration
 
 ---
 
-## Phase 2: OAuth Authentication (Starting Now)
+## Phase 2: OAuth Authentication ✅
 
-### Objectives
-1. Implement OAuth 2.0 PKCE flow
-2. Token management (store, refresh)
-3. Login UI with Material Design
-
-### Implementation Plan (TDD)
-1. **PKCE Utils** (tests first):
-   - Generate code verifier (random string)
-   - Generate code challenge (SHA-256 hash)
+### What We Built
+1. **PKCE Utilities** (TDD - 12 tests):
+   - Code verifier generation (crypto random)
+   - SHA-256 code challenge
    - Base64 URL encoding
 
-2. **OAuth Flow**:
-   - Build auth URL with scopes
-   - Handle callback
-   - Exchange code for tokens
+2. **OAuth Flow** (TDD - 16 tests):
+   - Auth URL builder with all params
+   - Callback handler with error cases
+   - Token exchange with Google
 
-3. **Token Management**:
-   - Store in localStorage
-   - Auto-refresh on expiry
-   - Logout (clear tokens)
+3. **Token Management** (TDD - 17 tests):
+   - localStorage persistence
+   - Expiry checks (5min buffer)
+   - Refresh token flow
+   - Logout
 
 4. **Login UI**:
-   - Login button
-   - Loading states
-   - Error handling
+   - Auth component (login/logout)
+   - Callback handler page
+   - Material Design buttons
+   - Error states with user feedback
+   - Main app routing (authenticated vs login)
 
-### Required Google Scopes
+### Tests
+- ✅ 46 tests passing (all TDD)
+- ✅ Build successful
+- ✅ No test failures
+
+### Implementation Notes
+- PKCE flow = secure (no client secret)
+- State parameter for CSRF protection
+- sessionStorage for verifier (single use)
+- localStorage for tokens (persistent)
+- Auto-refresh before expiry
+
+### Google Scopes
 - `https://www.googleapis.com/auth/spreadsheets`
 - `https://www.googleapis.com/auth/drive.file`
+- `https://www.googleapis.com/auth/userinfo.email`
+
+### Next: Phase 3 - Google Sheets Integration
+Ready to test OAuth flow - needs:
+1. Google OAuth Client ID (from GCP Console)
+2. Create `.env` with client ID
+3. Test login flow locally
