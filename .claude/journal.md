@@ -71,7 +71,41 @@ Building simple diet logging app with Google integration
 - ✅ Vitest runs
 - ✅ No npm vulnerabilities
 
-### Next: Phase 2 - Authentication
-- OAuth PKCE flow
-- Token management
-- Login UI
+### Deployment
+- ✅ Fixed package-lock.json issue
+- ✅ GH Actions workflow successful
+- ✅ Live at: https://galsapir.github.io/diet-log-mini/
+
+---
+
+## Phase 2: OAuth Authentication (Starting Now)
+
+### Objectives
+1. Implement OAuth 2.0 PKCE flow
+2. Token management (store, refresh)
+3. Login UI with Material Design
+
+### Implementation Plan (TDD)
+1. **PKCE Utils** (tests first):
+   - Generate code verifier (random string)
+   - Generate code challenge (SHA-256 hash)
+   - Base64 URL encoding
+
+2. **OAuth Flow**:
+   - Build auth URL with scopes
+   - Handle callback
+   - Exchange code for tokens
+
+3. **Token Management**:
+   - Store in localStorage
+   - Auto-refresh on expiry
+   - Logout (clear tokens)
+
+4. **Login UI**:
+   - Login button
+   - Loading states
+   - Error handling
+
+### Required Google Scopes
+- `https://www.googleapis.com/auth/spreadsheets`
+- `https://www.googleapis.com/auth/drive.file`
