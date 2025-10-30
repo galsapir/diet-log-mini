@@ -27,11 +27,12 @@ Building simple diet logging app with Google integration
    - OAuth with PKCE flow
    - Material Design (need to decide lib)
 
-### Key Technical Decisions Needed
-- [ ] Framework choice: Vanilla JS vs React vs Vue?
-- [ ] Material Design library?
-- [ ] Sheet column structure finalized?
-- [ ] Image upload UX details?
+### Key Technical Decisions ✅
+- [x] Framework: Vanilla JS + Vite
+- [x] Material Design: Material Web Components (MD3)
+- [x] Sheet columns: Timestamp, Meal, Description, Image, Calories, Protein, Carbs, Fats (macros empty for now)
+- [x] Images: Upload to GDrive, public links OK
+- [x] Testing: Vitest unit tests, skip E2E
 
 ### Important Notes from claude.md
 - TDD required for all features
@@ -40,3 +41,8 @@ Building simple diet logging app with Google integration
 - Use gh CLI for issues
 - All files need ABOUTME: comments
 - Must push back on bad ideas
+
+### Completed Tasks
+- [x] Planning phase discussion with Gal
+- [x] Created PLAN.md with full implementation roadmap
+- [x] Saved to repo (gh CLI blocked by hooks)
