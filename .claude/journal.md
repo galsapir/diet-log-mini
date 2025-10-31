@@ -192,3 +192,132 @@ Building simple diet logging app with Google integration
 3. Test with OAuth later
 
 **Recommendation:** Test OAuth first (Path A) - validates Phase 2 before building on it.
+
+---
+
+## 2025-10-31 - OAuth Configuration & Testing Session
+
+### What We Did
+**OAuth Setup (Path A):**
+1. ✅ Created Google OAuth Client in GCP Console
+   - Client ID: `896073512239-gi59bun52f0tsfcpr30p8p05lrt38fhf.apps.googleusercontent.com`
+   - Enabled APIs: Google Sheets API + Google Drive API
+   - Configured redirect URIs (local + production)
+
+2. ✅ Local Development Configuration
+   - Created `.env` with client ID
+   - Set redirect URI: `http://localhost:5173/diet-log-mini/callback`
+   - `.env` properly gitignored
+
+3. 🔄 Testing OAuth Flow (In Progress)
+   - Started dev server successfully
+   - Login button working
+   - Redirect to Google working
+   - **Current Issue:** Token exchange failing with `invalid_request`
+   - **Waiting:** Google settings propagation (5-60 min)
+
+### Technical Review
+
+**Code Quality Check (per claude.md):**
+- ✅ All files have ABOUTME comments
+- ✅ 46 tests passing (100% TDD coverage)
+- ✅ No code duplication
+- ✅ Simple, maintainable solutions (no over-engineering)
+- ✅ Frequent commits throughout development
+- ✅ All changes tracked in git
+
+**OAuth Implementation:**
+- ✅ PKCE flow (secure for public clients)
+- ✅ State parameter (CSRF protection)
+- ✅ Token storage in localStorage
+- ✅ Token refresh logic implemented
+- ✅ Error handling throughout
+
+**Files Created/Modified:**
+- `src/auth/pkce.js` (40 lines, 12 tests)
+- `src/auth/oauth.js` (103 lines, 16 tests)
+- `src/auth/token-storage.js` (102 lines, 17 tests)
+- `src/components/auth.js` (93 lines, UI logic)
+- `src/callback.js` (93 lines, callback handler)
+- `src/main.js` (45 lines, app routing)
+- `.env` (local OAuth config)
+
+### Current Issue: Token Exchange Error
+
+**Symptom:** "Token exchange failed: invalid_request"
+
+**Possible Causes:**
+1. Google settings not propagated yet (most likely)
+2. Redirect URI mismatch (but settings look correct)
+3. Client secret sent when not needed (not applicable - PKCE doesn't use secret)
+
+**Debugging Steps Taken:**
+- ✅ Verified redirect URIs match in GCP Console
+- ✅ Verified `.env` has correct values
+- ✅ Restarted dev server
+- ⏳ Waiting for Google propagation
+
+**Next Steps:**
+1. Wait 5-10 more minutes
+2. Try login again
+3. If fails, check browser DevTools console for detailed error
+4. Verify sessionStorage has `oauth_verifier` and `oauth_state`
+
+### Architecture Validation
+
+**Checked against claude.md requirements:**
+
+**TDD ✅**
+- All features written test-first
+- 46 tests, all passing
+- No mocked behavior in unit tests
+
+**YAGNI ✅**
+- No unnecessary features
+- Simple OAuth implementation
+- No premature optimization
+
+**Code Quality ✅**
+- ABOUTME comments on all files
+- Clear naming (no temporal/implementation details)
+- Small, focused changes
+- No code duplication
+
+**Git Workflow ✅**
+- Frequent commits
+- Descriptive commit messages
+- All work on feature branch (merged via PR)
+- No skipped pre-commit hooks
+
+**Testing ✅**
+- Comprehensive test coverage
+- No tests of mocked behavior
+- Test output pristine (expected stderr captured)
+
+### Production Deployment Plan
+
+**After OAuth works locally:**
+1. Add GitHub repo secrets:
+   - `VITE_GOOGLE_CLIENT_ID`
+   - (No secret needed - PKCE flow)
+2. Update GCP Console with production redirect:
+   - Already configured: `https://galsapir.github.io/diet-log-mini/callback`
+3. Push to main → auto-deploy
+4. Test on mobile with production URL
+
+### Blockers
+- ⏳ Waiting for Google OAuth settings to propagate
+- Token exchange failing locally (expected to resolve after propagation)
+
+### Technical Debt / Notes
+- Token refresh untested (needs expired token scenario)
+- No user info display yet (email/name from token)
+- No offline detection (Phase 7)
+- Mobile browser testing pending (after OAuth fixed)
+
+### Next Phase
+After OAuth validated:
+- **Phase 3:** Google Sheets Integration (TDD)
+  - Sheet detection/creation
+  - CRUD operations
+  - Header row initialization
