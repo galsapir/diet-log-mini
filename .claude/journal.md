@@ -411,3 +411,20 @@ Resolved OAuth "client_secret is missing" error by migrating from manual PKCE im
 - Better aligned with Google's recommendations
 - Ready for production deployment
 
+
+### Production Setup Notes (for next session)
+**Environment Variables:**
+- `.env` not committed (gitignored)
+- Local: `VITE_GOOGLE_CLIENT_ID=184872053705-11rn5ntvktfasa2qtpmnk7vjal28pig4...`
+- Production: Need GitHub secret (or hardcode in code if acceptable for public client)
+
+**OAuth Client Requirements:**
+- ✅ Local origin: `http://localhost:5173`
+- ⏳ Production origin: `https://galsapir.github.io` (to be added by Gal)
+- No redirect URIs needed (GIS uses popup)
+
+**For Phase 3 (Sheets Integration):**
+- GIS token available via `getAccessToken()` from `src/auth/gis.js`
+- Token automatically restored from localStorage on page load
+- Use token in `Authorization: Bearer ${token}` header for Sheets API calls
+
