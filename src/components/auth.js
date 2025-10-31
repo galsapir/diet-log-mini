@@ -1,14 +1,32 @@
 // ABOUTME: Authentication UI component for login/logout
 // ABOUTME: Handles OAuth flow initiation and displays user authentication state
 
-import { buildAuthUrl } from '../auth/oauth.js'
-import { getTokens, clearTokens, isTokenExpired } from '../auth/token-storage.js'
+import {
+  initializeGis,
+  requestAccessToken,
+  revokeToken,
+  isAuthenticated as checkAuth
+} from '../auth/gis.js'
 
 const SCOPES = [
   'https://www.googleapis.com/auth/spreadsheets',
   'https://www.googleapis.com/auth/drive.file',
   'https://www.googleapis.com/auth/userinfo.email'
 ]
+
+// Initialize GIS on module load
+let gisInitialized = false
+async function ensureGisInitialized() {
+  if (gisInitialized) return
+
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  if (!clientId) {
+    throw new Error('Google Client ID not configured')
+  }
+
+  await initializeGis(clientId, SCOPES)
+  gisInitialized = true
+}
 
 /**
  * Creates authentication UI component
@@ -18,10 +36,9 @@ export function createAuthComponent() {
   const container = document.createElement('div')
   container.className = 'auth-container'
 
-  const tokens = getTokens()
-  const isAuthenticated = tokens && !isTokenExpired(tokens)
+  const authenticated = checkAuth()
 
-  if (isAuthenticated) {
+  if (authenticated) {
     container.innerHTML = `
       <div class="auth-status">
         <span class="status-text">Signed in</span>
@@ -29,9 +46,14 @@ export function createAuthComponent() {
       </div>
     `
 
-    container.querySelector('#logout-btn').addEventListener('click', () => {
-      clearTokens()
-      window.location.reload()
+    container.querySelector('#logout-btn').addEventListener('click', async () => {
+      try {
+        await revokeToken()
+        window.location.reload()
+      } catch (error) {
+        console.error('Logout failed:', error)
+        alert('Failed to sign out. Please try again.')
+      }
     })
   } else {
     container.innerHTML = `
@@ -51,35 +73,21 @@ export function createAuthComponent() {
 }
 
 /**
- * Initiates OAuth login flow
+ * Initiates OAuth login flow using GIS
  */
 async function initiateLogin() {
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-  const redirectUri = import.meta.env.VITE_REDIRECT_URI || window.location.origin + '/callback'
-
-  if (!clientId) {
-    alert('OAuth client ID not configured. Please check .env file.')
-    return
-  }
-
-  const config = {
-    clientId,
-    redirectUri,
-    scopes: SCOPES
-  }
-
   try {
-    const { url, verifier, state } = await buildAuthUrl(config)
-
-    // Store verifier and state for callback validation
-    sessionStorage.setItem('oauth_verifier', verifier)
-    sessionStorage.setItem('oauth_state', state)
-
-    // Redirect to Google OAuth
-    window.location.href = url
+    await ensureGisInitialized()
+    await requestAccessToken()
+    // On success, reload to show authenticated state
+    window.location.reload()
   } catch (error) {
     console.error('Failed to initiate login:', error)
-    alert('Failed to start login. Please try again.')
+    if (error.message.includes('not configured')) {
+      alert('OAuth client ID not configured. Please check .env file.')
+    } else {
+      alert('Failed to start login. Please try again.')
+    }
   }
 }
 
@@ -88,6 +96,5 @@ async function initiateLogin() {
  * @returns {boolean}
  */
 export function isAuthenticated() {
-  const tokens = getTokens()
-  return tokens && !isTokenExpired(tokens)
+  return checkAuth()
 }
