@@ -19,7 +19,10 @@ let gisInitialized = false
 async function ensureGisInitialized() {
   if (gisInitialized) return
 
-  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  // Client ID is public (not secret), OK to hardcode with env override for local dev
+  const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+    '184872053705-11rn5ntvktfasa2qtpmnk7vjal28pig4.apps.googleusercontent.com'
+
   if (!clientId) {
     throw new Error('Google Client ID not configured')
   }
