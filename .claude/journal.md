@@ -321,3 +321,93 @@ After OAuth validated:
   - Sheet detection/creation
   - CRUD operations
   - Header row initialization
+
+## 2025-10-31 - Migration to Google Identity Services (GIS)
+
+### Session Summary
+Resolved OAuth "client_secret is missing" error by migrating from manual PKCE implementation to Google Identity Services (GIS) library.
+
+### Root Cause Analysis
+**Problem:** Google's OAuth2 implementation requires `client_secret` even when using PKCE, contrary to RFC 7636 standard.
+- Desktop app OAuth client: Still requires secret
+- Web app OAuth client with manual PKCE: Requires secret
+- **Solution:** Use GIS library (Google's recommended approach for JS SPAs)
+
+### Implementation Changes
+
+**Replaced manual PKCE with GIS:**
+- Added GIS + gapi script loaders to `index.html`
+- Created `src/auth/gis.js` (149 lines, 12 tests)
+- Rewrote `src/components/auth.js` to use GIS popup flow
+- Removed obsolete files:
+  - `src/auth/pkce.js` (40 lines, 12 tests)
+  - `src/auth/oauth.js` (103 lines, 16 tests)
+  - `src/auth/token-storage.js` (102 lines, 17 tests)
+  - `src/callback.js` (93 lines)
+  - `callback.html`
+  - All associated test files
+
+**Net result:** 475 lines removed, only 13 tests (from 46), simpler implementation.
+
+### GIS Benefits
+1. **No client_secret exposure:** GIS handles OAuth internally
+2. **Popup flow:** No redirect/callback page needed
+3. **Official library:** Google-maintained, future-proof
+4. **Token persistence:** Implemented via localStorage
+5. **Simpler code:** Less boilerplate than manual PKCE
+
+### OAuth Configuration
+**Created new Web Application OAuth client:**
+- Client ID: `184872053705-11rn5ntvktfasa2qtpmnk7vjal28pig4.apps.googleusercontent.com`
+- Authorized JavaScript origins:
+  - `http://localhost:5173` (local dev)
+  - `https://galsapir.github.io` (production) ← **TO ADD**
+- No authorized redirect URIs needed (GIS uses popup)
+
+### Testing Results
+✅ Local authentication working:
+1. Click "Sign in with Google" → popup appears
+2. Select account → grant permissions
+3. Popup closes → page reloads → "Signed in" status shown
+4. Token persists across page reloads (localStorage)
+5. "Sign out" revokes token and clears storage
+
+✅ Tests: 13 passing (GIS + setup)
+- Down from 46 tests (removed OAuth/PKCE/token-storage tests)
+- GIS module fully tested with mocked Google APIs
+
+### TDD Compliance ✅
+- Wrote GIS tests first (12 tests, all failing)
+- Implemented `src/auth/gis.js` to make tests pass
+- All tests green before integrating with UI
+
+### Code Quality ✅
+- All files have ABOUTME comments
+- Clean naming (no temporal/implementation refs)
+- Minimal code duplication
+- Followed claude.md style guide
+
+### Git Workflow ✅
+- Feature branch: `feature/gis-auth`
+- Descriptive commit message with full context
+- Ready to merge to main after production OAuth config
+
+### Next Steps
+1. ⏳ **Add GitHub Pages URL to OAuth client** (Gal to do in GCP Console)
+2. Test on main branch
+3. Deploy to GitHub Pages
+4. Verify production login
+5. **Phase 3:** Google Sheets Integration (TDD)
+
+### Technical Insights
+- Google's OAuth implementation deviates from standard PKCE spec
+- Official SDKs/libraries (like GIS) bypass these restrictions
+- Manual PKCE not feasible for browser-based apps with Google
+- Token persistence required (GIS stores tokens in memory only)
+
+### Session Outcome
+🎉 **OAuth authentication fully working with GIS**
+- Simpler, more maintainable implementation
+- Better aligned with Google's recommendations
+- Ready for production deployment
+
